@@ -1,14 +1,9 @@
 import { useEffect, useState } from 'react'
 
-interface P4Status {
-  online: boolean
-  latestChange?: number
-  latestChangeUser?: string
-  latestChangeDescription?: string
-  latestChangeTime?: string
-  lastHeartbeat?: string
-  message?: string
-}
+import ServerModel from './components/ServerModel'
+import StatusBanner from './components/StatusBanner'
+import StatusDetails from './components/StatusDetails'
+import type { P4Status } from './types/status'
 
 const STATUS_URL = import.meta.env.VITE_STATUS_URL
 
@@ -26,6 +21,7 @@ function App() {
         }
 
         const data: P4Status = await response.json()
+
         setStatus(data)
       } catch {
         setError(true)
@@ -36,30 +32,40 @@ function App() {
   }, [])
 
   if (error) {
-    return <p>Could not load server status.</p>
+    return (
+      <main className="feedback-screen">
+        Could not load server status.
+      </main>
+    )
   }
 
   if (!status) {
-    return <p>Loading...</p>
+    return (
+      <main className="feedback-screen">
+        Loading...
+      </main>
+    )
   }
 
   return (
-    <main>
-      <h1>P4Status</h1>
+    <main className={`dashboard ${status.online ? 'online' : 'offline'}`}>
+      <div className="dashboard-container">
+        <header className="dashboard-header">
+          <h1>
+            <span>P4</span>Status
+          </h1>
+        </header>
 
-      <p>{status.online ? 'Online' : 'Offline'}</p>
+        <div className="dashboard-content">
+          <ServerModel online={status.online} />
+          
 
-      {status.latestChange && (
-        <>
-          <p>Change #{status.latestChange}</p>
-          <p>User: {status.latestChangeUser}</p>
-          <p>Description: {status.latestChangeDescription}</p>
-          <p>Latest change: {status.latestChangeTime}</p>
-          <p>Last heartbeat: {status.lastHeartbeat}</p>
-        </>
-      )}
-
-      {status.message && <p>{status.message}</p>}
+          <div className="dashboard-info">
+            <StatusBanner online={status.online} />
+            <StatusDetails status={status} />
+          </div>
+        </div>
+      </div>
     </main>
   )
 }
