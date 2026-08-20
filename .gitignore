@@ -1,2 +1,6 @@
+#frontend .env
+.env
+#heartbeat .env
 .heartbeat.env
+#heartbeat virtual environment
 .heartbeat/
