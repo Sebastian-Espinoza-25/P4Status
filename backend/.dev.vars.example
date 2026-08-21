@@ -1,1 +1,2 @@
 HEARTBEAT_SECRET=Your-secret-key
+ALLOWED_ORIGINS=http://localhost:5173,https://your-url
